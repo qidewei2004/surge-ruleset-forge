@@ -2,7 +2,7 @@
 
 把分散在各处的上游 Surge 规则源,自动**下载、合并、去重、归并、分类**成干净、可订阅的 `.list` 规则集。
 
-[![build](https://github.com/qidewei/surge-ruleset-forge/actions/workflows/build.yml/badge.svg)](https://github.com/qidewei/surge-ruleset-forge/actions/workflows/build.yml)
+[![build](https://github.com/qidewei2004/surge-ruleset-forge/actions/workflows/build.yml/badge.svg)](https://github.com/qidewei2004/surge-ruleset-forge/actions/workflows/build.yml)
 
 ## 解决什么问题
 
@@ -61,16 +61,29 @@ categories:
 
 ## 在 Surge 中订阅
 
-构建产物提交进仓库后,通过 raw URL 引用:
+构建产物提交进仓库后,通过 jsdelivr CDN 引用(策略目标按个人 Surge.conf 的策略组示例):
 
 ```ini
 [Rule]
-RULE-SET,https://fastly.jsdelivr.net/gh/qidewei/surge-ruleset-forge@main/dist/streaming.list,机场合集,extended-matching
-RULE-SET,https://fastly.jsdelivr.net/gh/qidewei/surge-ruleset-forge@main/dist/social.list,国际社区,extended-matching
-RULE-SET,https://fastly.jsdelivr.net/gh/qidewei/surge-ruleset-forge@main/dist/ai.list,AI,extended-matching
+# 流媒体 / 社交 / AI
+RULE-SET,https://fastly.jsdelivr.net/gh/qidewei2004/surge-ruleset-forge@main/dist/streaming.list,机场合集,extended-matching
+RULE-SET,https://fastly.jsdelivr.net/gh/qidewei2004/surge-ruleset-forge@main/dist/social.list,国际社区,extended-matching
+RULE-SET,https://fastly.jsdelivr.net/gh/qidewei2004/surge-ruleset-forge@main/dist/tiktok.list,TikTok,extended-matching
+RULE-SET,https://fastly.jsdelivr.net/gh/qidewei2004/surge-ruleset-forge@main/dist/ai.list,AI,extended-matching
+# 开发 / 学术 / 加密货币 / 测速
+RULE-SET,https://fastly.jsdelivr.net/gh/qidewei2004/surge-ruleset-forge@main/dist/dev.list,国际基础服务,extended-matching
+RULE-SET,https://fastly.jsdelivr.net/gh/qidewei2004/surge-ruleset-forge@main/dist/scholar.list,国际基础服务,extended-matching
+RULE-SET,https://fastly.jsdelivr.net/gh/qidewei2004/surge-ruleset-forge@main/dist/crypto.list,PROXY,extended-matching
+RULE-SET,https://fastly.jsdelivr.net/gh/qidewei2004/surge-ruleset-forge@main/dist/speedtest.list,SpeedTest,extended-matching
+# 游戏
+RULE-SET,https://fastly.jsdelivr.net/gh/qidewei2004/surge-ruleset-forge@main/dist/game.list,Game,extended-matching
+# 国内服务 / Apple(直连)
+RULE-SET,https://fastly.jsdelivr.net/gh/qidewei2004/surge-ruleset-forge@main/dist/cn-media.list,中文内容,extended-matching
+RULE-SET,https://fastly.jsdelivr.net/gh/qidewei2004/surge-ruleset-forge@main/dist/apple.list,DIRECT,extended-matching
 ```
 
 > 走 jsdelivr CDN 而非 raw.githubusercontent.com,国内访问更稳定。
+> 当前共 11 个分类、约 4000 条规则,完整列表见 `sources.yaml`。
 
 ## 自动更新
 

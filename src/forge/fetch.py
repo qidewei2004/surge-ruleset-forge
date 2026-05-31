@@ -9,7 +9,7 @@ from pathlib import Path
 import httpx
 
 CACHE_DIR = Path(".cache")
-USER_AGENT = "surge-ruleset-forge/0.1 (+https://github.com/qidewei/surge-ruleset-forge)"
+USER_AGENT = "surge-ruleset-forge/0.1 (+https://github.com/qidewei2004/surge-ruleset-forge)"
 
 
 def _cache_path(url: str) -> Path:
