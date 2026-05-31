@@ -1,0 +1,49 @@
+name: build
+
+on:
+  schedule:
+    # 每日 UTC 03:17 自动重建(避开整点,降低与他人任务撞峰概率)
+    - cron: "17 3 * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - "sources.yaml"
+      - "src/**"
+      - ".github/workflows/build.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install project
+        run: uv pip install --system -e ".[dev]"
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Build rulesets
+        run: forge build --no-cache
+
+      - name: Commit updated rulesets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dist/
+          if git diff --staged --quiet; then
+            echo "规则集无变更,跳过提交。"
+          else
+            git commit -m "chore: auto-update rulesets ($(date -u +%Y-%m-%d))"
+            git push
+          fi

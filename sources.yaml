@@ -1,0 +1,48 @@
+# surge-ruleset-forge 源配置
+#
+# 每个 category 产出一个 dist/<output>.list 文件。
+# forge 会下载该分类下所有 sources,解析、合并、去重后写入产物。
+#
+# 字段说明:
+#   output:   产物文件名(不含扩展名),最终生成 dist/<output>.list
+#   desc:     分类描述,写入产物头注释
+#   sources:  上游规则地址列表(支持 .list / .conf,逗号分隔的 Surge 规则格式)
+#   types:    可选。仅保留这些规则类型(如只要域名类、丢弃 IP 类时使用)
+#             省略则保留全部受支持类型。
+
+defaults:
+  # 仅保留下列规则类型(域名维度)。设为 null 表示不过滤。
+  # 这样产出的规则集可被任意策略组复用,不会把 IP 规则混进非 IP 层。
+  keep_types:
+    - DOMAIN
+    - DOMAIN-SUFFIX
+    - DOMAIN-KEYWORD
+    - DOMAIN-WILDCARD
+    - DOMAIN-SET
+
+categories:
+  - output: ai
+    desc: AI 服务(OpenAI / Claude / Gemini 等)
+    sources:
+      - https://raw.githubusercontent.com/shangrenxi/Rules/refs/heads/master/rules/AI.list
+      - https://fastly.jsdelivr.net/gh/dler-io/Rules@main/Surge/Surge%203/Provider/AI%20Suite.list
+
+  - output: social
+    desc: 国际社交与通信社区
+    sources:
+      - https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Facebook/Facebook.list
+      - https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Instagram/Instagram.list
+      - https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Threads/Threads.list
+      - https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Twitter/Twitter.list
+      - https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Reddit/Reddit.list
+      - https://fastly.jsdelivr.net/gh/dler-io/Rules@main/Surge/Surge%203/Provider/Discord.list
+
+  - output: streaming
+    desc: 海外流媒体(Netflix / Disney+ / Max / YouTube 等)
+    sources:
+      - https://fastly.jsdelivr.net/gh/dler-io/Rules@main/Surge/Surge%203/Provider/Media/Netflix.list
+      - https://fastly.jsdelivr.net/gh/dler-io/Rules@main/Surge/Surge%203/Provider/Media/Disney%20Plus.list
+      - https://fastly.jsdelivr.net/gh/dler-io/Rules@main/Surge/Surge%203/Provider/Media/Max.list
+      - https://fastly.jsdelivr.net/gh/dler-io/Rules@main/Surge/Surge%203/Provider/Media/YouTube.list
+      - https://fastly.jsdelivr.net/gh/dler-io/Rules@main/Surge/Surge%203/Provider/Media/YouTube%20Music.list
+      - https://fastly.jsdelivr.net/gh/dler-io/Rules@main/Surge/Surge%203/Provider/Media/Spotify.list

@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+build/
+.ruff_cache/
+
+# uv
+uv.lock
+
+# Local cache for fetched upstream sources
+.cache/
+
+# OS
+.DS_Store
