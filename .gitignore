@@ -9,7 +9,7 @@ build/
 .ruff_cache/
 
 # uv
-uv.lock
+# 注:uv.lock 应提交(应用型项目,保证可复现构建 + CI 缓存生效)
 
 # Local cache for fetched upstream sources
 .cache/
