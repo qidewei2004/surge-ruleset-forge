@@ -87,7 +87,9 @@ RULE-SET,https://fastly.jsdelivr.net/gh/qidewei2004/surge-ruleset-forge@main/dis
 
 ## 自动更新
 
-`.github/workflows/build.yml` 每日定时运行 `forge build`,若 `dist/` 有变更则自动提交。规则集始终保持新鲜,无需人工介入。
+`.github/workflows/build.yml` 每日定时运行 `forge build`,若 `dist/` 有变更则自动提交,规则集始终保持新鲜,无需人工介入。
+
+**智能时间戳**:产物头注释带 `Updated` 时间,但仅在规则内容真正变化时才推进——规则未变则文件字节保持不变。这让产物近似输入的纯函数:既保留可读的"最后更新时间",又避免每次构建都产生无意义的 diff,杜绝噪声 commit 与并发 rebase 冲突。
 
 ## 开发
 
