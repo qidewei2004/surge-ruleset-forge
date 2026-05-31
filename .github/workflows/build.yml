@@ -45,7 +45,7 @@ jobs:
             echo "规则集无变更,跳过提交。"
           else
             git commit -m "chore: auto-update rulesets ($(date -u +%Y-%m-%d))"
-            # 推送前 rebase 拉取,容忍构建期间 main 已被推进(避免 fetch-first 拒绝)
-            git pull --rebase --autostash origin main
+            # 产物为纯函数,正常无冲突;rebase 仅兜底并发推进。
+            git pull --rebase origin main
             git push
           fi
