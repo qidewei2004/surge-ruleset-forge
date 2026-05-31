@@ -39,6 +39,9 @@ forge build
 # 忽略缓存强制重新下载
 forge build --no-cache
 
+# 构建并报告每个分类的规则新增/移除(对比上次产物)
+forge build --diff
+
 # 查看产物统计
 forge stats
 ```

@@ -34,7 +34,7 @@ jobs:
         run: uv run pytest -q
 
       - name: Build rulesets
-        run: uv run forge build --no-cache
+        run: uv run forge build --no-cache --diff
 
       - name: Commit updated rulesets
         run: |

@@ -8,6 +8,7 @@ from pathlib import Path
 import yaml
 
 from .dedupe import dedupe, sort_rules
+from .diff import CategoryDiff, diff_category
 from .emit import emit
 from .fetch import fetch_all
 from .models import Rule
@@ -58,6 +59,7 @@ class BuildResult:
     count: int
     sources_ok: int
     sources_total: int
+    diff: CategoryDiff | None = None
 
 
 def build(
@@ -65,8 +67,12 @@ def build(
     dist_dir: Path,
     *,
     use_cache: bool = True,
+    show_diff: bool = False,
 ) -> list[BuildResult]:
-    """执行完整构建,返回每个分类的结果摘要。"""
+    """执行完整构建,返回每个分类的结果摘要。
+
+    show_diff: 为 True 时,对比旧产物并在日志中报告规则新增/移除。
+    """
     config = load_config(config_path)
     results: list[BuildResult] = []
 
@@ -85,8 +91,12 @@ def build(
         merged = dedupe(merged)
         merged = sort_rules(merged)
 
+        out_path = dist_dir / f"{cat.output}.list"
+        # diff 必须在 emit 覆盖文件之前计算
+        cat_diff = diff_category(out_path, merged) if show_diff else None
+
         count = emit(
-            dist_dir / f"{cat.output}.list",
+            out_path,
             merged,
             desc=cat.desc,
             sources=cat.sources,
@@ -96,11 +106,33 @@ def build(
             count=count,
             sources_ok=len(fetched),
             sources_total=len(cat.sources),
+            diff=cat_diff,
         )
         results.append(result)
         print(
             f"  -> dist/{cat.output}.list  "
             f"({count} rules, {result.sources_ok}/{result.sources_total} sources)"
         )
+        if cat_diff is not None:
+            _print_diff(cat_diff)
 
     return results
+
+
+def _print_diff(d: CategoryDiff, *, max_show: int = 10) -> None:
+    """打印单个分类的 diff 摘要。"""
+    if d.is_new:
+        print(f"     [diff] 新产物,{len(d.added)} 条规则")
+        return
+    if not d.added and not d.removed:
+        print("     [diff] 无变化")
+        return
+    print(f"     [diff] +{len(d.added)} 新增, -{len(d.removed)} 移除")
+    for line in d.added[:max_show]:
+        print(f"       + {line}")
+    if len(d.added) > max_show:
+        print(f"       + ... 另有 {len(d.added) - max_show} 条")
+    for line in d.removed[:max_show]:
+        print(f"       - {line}")
+    if len(d.removed) > max_show:
+        print(f"       - ... 另有 {len(d.removed) - max_show} 条")

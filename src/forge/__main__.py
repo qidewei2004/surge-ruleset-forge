@@ -3,6 +3,7 @@
 用法:
     forge build            # 构建全部分类到 dist/
     forge build --no-cache # 忽略本地缓存,强制重新下载
+    forge build --diff     # 构建并报告规则新增/移除
     forge stats            # 显示当前 dist/ 产物统计
 """
 
@@ -23,10 +24,18 @@ def _cmd_build(args: argparse.Namespace) -> int:
     if not config_path.exists():
         print(f"找不到配置文件: {config_path}", file=sys.stderr)
         return 1
-    results = build(config_path, Path(args.dist), use_cache=not args.no_cache)
+    results = build(
+        config_path,
+        Path(args.dist),
+        use_cache=not args.no_cache,
+        show_diff=args.diff,
+    )
     total = sum(r.count for r in results)
     failed = [r for r in results if r.sources_ok < r.sources_total]
     print(f"\n完成: {len(results)} 个分类, 共 {total} 条规则.")
+    if args.diff:
+        changed = [r for r in results if r.diff and r.diff.changed]
+        print(f"变化: {len(changed)}/{len(results)} 个分类有规则增减.")
     if failed:
         print(f"注意: {len(failed)} 个分类存在下载失败的源,已用可用源继续构建.")
     return 0
@@ -56,6 +65,9 @@ def main(argv: list[str] | None = None) -> int:
     p_build.add_argument("-c", "--config", default=str(DEFAULT_CONFIG))
     p_build.add_argument("-d", "--dist", default=str(DEFAULT_DIST))
     p_build.add_argument("--no-cache", action="store_true", help="忽略本地缓存")
+    p_build.add_argument(
+        "--diff", action="store_true", help="对比旧产物,报告规则新增/移除"
+    )
     p_build.set_defaults(func=_cmd_build)
 
     p_stats = sub.add_parser("stats", help="显示 dist/ 产物统计")
